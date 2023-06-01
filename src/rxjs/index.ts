@@ -1,16 +1,20 @@
-import { fromEvent, scan, take, throttleTime } from 'rxjs';
+import { map, of, take, tap } from "rxjs";
+import { multiplyBy } from "./custom-operators";
 
-// RxJS is able to produce values using pure functions, making code less prone to errors.
+let counter = 0;
 
-const observable = fromEvent(document, 'click').pipe(
-  throttleTime(1000), // Make sure that there is at least 1000 seconds between each subsequent event firing
-  scan(count => count + 1, 0) // The 'scan' operator works like the Array object's 'reduce' method
+const obs = of(0, 1, 2, 3, 4, 5).pipe(
+    map((val) => val + 1), // Transforming operator to transform data
+    multiplyBy(100, { log: true }),
+    tap((val) => (counter += val)), // Utility operator to perform side effect
+    take(2) // Filtering operator that makes output observable complete
 );
 
-const subscription = observable.subscribe(count =>
-  console.log(`Clicked ${count} times`)
-);
-
-setTimeout(() => {
-  subscription.unsubscribe();
-}, 10000);
+obs.subscribe({
+    next: (val) => {
+        console.log(`Add value: ${val}`);
+    },
+    complete: () => {
+        console.log(`Completed: ${counter}`);
+    },
+});
