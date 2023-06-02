@@ -1,30 +1,64 @@
-import { catchError, map, of, take, tap } from "rxjs";
-import { multiplyBy } from "./custom-operators";
+import {
+    combineLatest,
+    delay,
+    forkJoin,
+    map,
+    of,
+    tap,
+    withLatestFrom,
+} from "rxjs";
+import { basics } from "./basics";
 
-let counter = 0;
+// basics();
 
-const obs$ = of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).pipe(
-    map((val) => val + 1), // Transforming operator to transform data
-    map((val) => {
-        if (val === 3) {
-            throw `Warning: ${val} is not allowed!`;
-        }
-        return val;
-    }), // Create an error to be caught by the catchError operator
-    catchError((err) => {
-        console.warn(err);
-        return of(9, 10, 11, 12, 13, 14);
-    }), // Handle errors by returning an observable
-    multiplyBy(100, { log: false }), // Custom operator
-    tap((val) => (counter += val)), // Utility operator to perform side effect
-    take(4) // Filtering operator that makes output observable complete
-);
+const runners = [withLatestFrom.name];
 
-obs$.subscribe({
-    next: (val) => {
-        console.log(`Add value: ${val}`);
-    },
-    complete: () => {
-        console.log(`Completed: ${counter}`);
-    },
-});
+const arr1$ = of(1, 2, 3).pipe(delay(400));
+const arr2$ = of(10, 20, 30);
+const arr3$ = of(100, 200, 300);
+
+(() => {
+    if (!runners.includes(combineLatest.name)) return;
+
+    // combineLatest:
+    // Emits whenever any of the given input observables emits a new value
+    // Starts emitting only when all input observables have emitted at least once
+    // Output value contains the latest values of each input observable
+
+    const output = combineLatest([arr1$, arr2$, arr3$]).pipe();
+
+    output.subscribe((val) => {
+        console.log(combineLatest.name);
+        console.log(val);
+    });
+})();
+
+(() => {
+    // forkJoin
+    // Emits when all input observables have completed
+    // Output value contains the latest values of each input observable
+    // Do not use with input observables that do not complete
+
+    if (!runners.includes(forkJoin.name)) return;
+
+    const output = forkJoin([arr1$, arr2$, arr3$]);
+
+    output.subscribe((val) => {
+        console.log(forkJoin.name);
+        console.log(val);
+    });
+})();
+
+(() => {
+    // withLatestFrom
+    // Creates an output observable that works like combineLatest, but only emits when the input observable emits a value
+
+    if (!runners.includes(withLatestFrom.name)) return;
+
+    const output = arr1$.pipe(withLatestFrom(arr2$, arr3$));
+
+    output.subscribe((val) => {
+        console.log(withLatestFrom.name);
+        console.log(val);
+    });
+})();
