@@ -51,11 +51,13 @@ const arr3$ = of(100, 200, 300);
 
 (() => {
     // withLatestFrom
-    // Creates an output observable that works like combineLatest, but only emits when the input observable emits a value
+    // Creates an output observable that emits when the source observable emits
+    // Source observable emits only when all input observables have emitted at least once
+    // That means that if the source observable completes first, it will not emit any value
 
     if (!runners.includes(withLatestFrom.name)) return;
 
-    const output = arr1$.pipe(withLatestFrom(arr2$, arr3$));
+    const output = arr1$.pipe(withLatestFrom(arr2$, arr3$)); // arr1$ acts as the source observable here
 
     output.subscribe((val) => {
         console.log(withLatestFrom.name);
