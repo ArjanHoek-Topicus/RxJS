@@ -1,9 +1,11 @@
 import {
+    Subject,
     combineLatest,
     delay,
     forkJoin,
     map,
     of,
+    startWith,
     tap,
     withLatestFrom,
 } from "rxjs";
@@ -11,7 +13,7 @@ import { basics } from "./basics";
 
 // basics();
 
-const runners = [withLatestFrom.name];
+const runners: string[] = [];
 
 const arr1$ = of(1, 2, 3).pipe(delay(400));
 const arr2$ = of(10, 20, 30);
@@ -63,4 +65,11 @@ const arr3$ = of(100, 200, 300);
         console.log(withLatestFrom.name);
         console.log(val);
     });
+})();
+
+(() => {
+    const subj = new Subject<number>();
+    const subj$ = subj.asObservable().pipe(startWith(3, 5));
+
+    subj$.subscribe((val) => console.log(val));
 })();
