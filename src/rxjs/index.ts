@@ -13,11 +13,11 @@ const obs$ = of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10).pipe(
     }), // Create an error to be caught by the catchError operator
     catchError((err) => {
         console.warn(err);
-        return of(10);
+        return of(9, 10, 11, 12, 13, 14);
     }), // Handle errors by returning an observable
     multiplyBy(100, { log: false }), // Custom operator
     tap((val) => (counter += val)), // Utility operator to perform side effect
-    take(7) // Filtering operator that makes output observable complete
+    take(4) // Filtering operator that makes output observable complete
 );
 
 obs$.subscribe({
