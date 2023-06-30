@@ -2,6 +2,7 @@ import {
     Subject,
     combineLatest,
     delay,
+    filter,
     forkJoin,
     fromEvent,
     interval,
@@ -18,7 +19,7 @@ import { basics } from "./basics";
 
 // basics();
 
-const runners: string[] = [scan.name, merge.name];
+const runners: string[] = [scan.name];
 
 const arr1$ = of(1, 2, 3).pipe(delay(400));
 const arr2$ = of(10, 20, 30);
@@ -87,7 +88,7 @@ const arr3$ = of(100, 200, 300);
     // scan
     // Can be used to keep track of application state
 
-    const parent = document.querySelector(".scan");
+    const parent = document.querySelector(".scan-1");
 
     const obs$ = fromEvent(parent.querySelectorAll("input"), "click").pipe(
         map((e: PointerEvent) => +(e.target as HTMLInputElement).value),
@@ -109,6 +110,33 @@ const arr3$ = of(100, 200, 300);
     );
 
     sum$.subscribe((x) => (parent.querySelector(".counter").textContent = x));
+})();
+
+(() => {
+    return;
+
+    const parent = document.querySelector(".scan-2");
+
+    const observables = Array.from(parent.querySelectorAll("input")).map((el) =>
+        fromEvent(el, "input")
+    );
+
+    const obs$ = merge(...observables).pipe(
+        map(({ target }: Event) => {
+            const { name: key, value } = target as HTMLInputElement;
+            return [key, value];
+        }),
+        scan(
+            (acc, [key, value]) => ({
+                ...acc,
+                lastChanged: [key, value],
+                formData: { ...acc.formData, [key]: value },
+            }),
+            { formData: {} }
+        )
+    );
+
+    obs$.subscribe((data) => console.log(data));
 })();
 
 (() => {
