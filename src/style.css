@@ -5,9 +5,11 @@
 }
 
 body {
-    /* background-color: #eee; */
     font-family: monospace;
     padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
 }
 
 .container {
@@ -15,15 +17,13 @@ body {
     border: 1px dotted #c00;
 }
 
-h2 {
-    margin-bottom: 0.5rem;
-}
-
 input {
     background: #ccc;
     border: none;
     padding: 0.5rem 1rem;
     transition: background 0.3s;
+    border-radius: 0.25rem;
+    margin: 0.25rem 0 0.5rem;
 }
 
 input:hover {
@@ -39,7 +39,6 @@ input[type="button"] {
     gap: 0.5rem;
     border: 1px dotted #00c;
     padding: 0.5rem 1rem;
-    margin-top: 0.5rem;
 }
 
 .vertical {
